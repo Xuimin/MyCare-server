@@ -13,7 +13,7 @@ exports.checkin = async (req, res) => {
 
   // set current date and time
   let currentDateTime = new Date();
-  let date = currentDateTime.getDate() + "/" + currentDateTime.getMonth() + 1 + "/" + currentDateTime.getFullYear()
+  let date = `${currentDateTime.getDate()} + "/" + ${currentDateTime.getMonth() + 1} + "/" + ${currentDateTime.getFullYear()}`
   let time = currentDateTime.getHours() + ":" + currentDateTime.getMinutes()
 
   const histories = new Histories({
