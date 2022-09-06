@@ -36,8 +36,9 @@ exports.checkin = async (req, res) => {
 }
 
 // GET OWN HISTORY
-exports.getOwn = (req, res) => {
-  Histories.find({ isActive: true })
+exports.getOwn = async (req, res) => {
+  const user = await Users.findOne({ isActive: true })
+  Histories.find({ userId: user.id })
   .then(data => { res.send(data) })
   .catch(err => {
     res.status(500).send({ message: err.message || `Failed to get histories of user ${req.body.userId}.` })
