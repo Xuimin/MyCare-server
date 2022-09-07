@@ -15,11 +15,11 @@ exports.register = (req, res) => {
 
   // checking all inputs
   let checkPw = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()-+]).{8,}$/
-  let checkPhone = /^(1)[02-46-9]-*[0-9]{7}$|^(1)[1]-*[0-9]{8}$/gm
+  let checkPhone = /^[0-9]{9,10}$/gm
 
   if(phone.match(checkPhone) == null) {
     return res.status(400).send({
-      message: "Phone should be at least 9-10 digit long and start with 1."
+      message: "Phone should be at least 9-10 digit long."
     })
   }
 
@@ -115,7 +115,7 @@ exports.updateOwnDetails = async (req, res) => {
 
   // checking all inputs
   let checkPw = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()-+]).{8,}$/
-  let checkPhone = /^(1)[02-46-9]-*[0-9]{7}$|^(1)[1]-*[0-9]{8}$/gm
+  let checkPhone = /^[0-9]{9,10}$/gm
 
   if(phone.match(checkPhone) == null) {
     return res.status(400).send({
