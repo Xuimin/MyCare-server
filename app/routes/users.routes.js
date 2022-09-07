@@ -7,7 +7,7 @@ module.exports = app => {
   router.put('/login/', users.login);
   router.put('/logout/', users.logout);
   router.put('/details/', users.updateOwnDetails);
-  router.get("/", users.getOwnDetails);
+  router.get("/details", users.getOwnDetails);
   router.get("/", users.exists)
   
   app.use("/users", router)
