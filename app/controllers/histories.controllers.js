@@ -13,8 +13,16 @@ exports.checkin = async (req, res) => {
 
   // set current date and time
   let currentDateTime = new Date();
+  
   let date = `${currentDateTime.getDate()}/${currentDateTime.getMonth() + 1}/${currentDateTime.getFullYear()}`
-  let time = currentDateTime.getHours() + ":" + currentDateTime.getMinutes()
+
+  let hour = currentDateTime.getHours()
+  let minute = currentDateTime.getMinutes()
+  
+  if(hour < 10) { hour = "0" + currentDateTime.getHours() }
+  if(minute < 10) { minute = "0" + currentDateTime.getMinutes() }
+
+  let time =  hour + ":" + minute
 
   const histories = new Histories({
     location: req.body.location,
