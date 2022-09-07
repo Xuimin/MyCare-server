@@ -13,25 +13,53 @@ exports.register = (req, res) => {
      return
   }
 
-  let salt = bcrypt.genSaltSync(10)
-  let hash = bcrypt.hashSync(password, salt)
+  // checking all inputs
+  let checkPw = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()-+]).{8,}$/
+  let checkPhone = /^(1)[02-46-9]-*[0-9]{7}$|^(1)[1]-*[0-9]{8}$/gm
 
-  const users = new User({
-    fullname,
-    phone,
-    location,
-    password: hash
-  })
-
-  users.save()
-  .then(data => {
-    res.send({
-      message: "Successfully Register!",
-      data
+  if(phone.match(checkPhone) == null) {
+    return res.status(400).send({
+      message: "Phone should be at least 9-10 digit long and start with 1."
     })
-  })
-  .catch(err => {
-    res.status(500).send({ message: err.message || "Failed to sign up. Please try again." })
+  }
+
+  if(password.match(checkPw) == null) {
+    return res.status(400).send({
+      message: "Password should have at least 8 characters and contain alphabet, number and special symbols."
+    })
+  }
+
+  if(password !== confirmPassword) {
+    return res.status(400).send({
+      message: "Confirm password and password are not the same."
+    })
+  }
+
+  User.findOne({ phone }, (err, foundUser) => {
+    if(foundUser) {
+      res.status(400).send({ message: "User already exists! Please try with a different phone number." })
+    } else {
+      let salt = bcrypt.genSaltSync(10)
+      let hash = bcrypt.hashSync(password, salt)
+
+      const users = new User({
+        fullname,
+        phone,
+        location,
+        password: hash
+      })
+
+      users.save()
+      .then(data => {
+        res.send({
+          message: "Successfully Register!",
+          data
+        })
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message || "Failed to sign up. Please try again." })
+      })
+    }
   })
 }
 
@@ -84,6 +112,34 @@ exports.updateOwnDetails = async (req, res) => {
   const { fullname, phone, password, confirmPassword, location } = req.body
   const user = await User.findOne({ isActive: true })
   const phoneNum = await User.findOne({ phone })
+
+  // checking all inputs
+  let checkPw = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()-+]).{8,}$/
+  let checkPhone = /^(1)[02-46-9]-*[0-9]{7}$|^(1)[1]-*[0-9]{8}$/gm
+
+  if(phone.match(checkPhone) == null) {
+    return res.status(400).send({
+      message: "Phone should be at least 9-10 digit long and start with 1"
+    })
+  }
+
+  if(phoneNum) {
+    return res.status(400).send({
+      message: "Phone number already exists"
+    })
+  }
+
+  if(password.match(checkPw) == null) {
+    return res.status(400).send({
+      message: "Password should have at least 8 characters and contain alphabet, number and special symbols "
+    })
+  }
+
+  if(password !== confirmPassword) {
+    return res.status(400).send({
+      message: "Confirm password and password are not the same"
+    })
+  }
   
   let salt = bcrypt.genSaltSync(10)
   let hash = bcrypt.hashSync(password, salt)
