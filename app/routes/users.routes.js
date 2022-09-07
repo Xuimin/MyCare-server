@@ -8,7 +8,7 @@ module.exports = app => {
   router.put('/logout/', users.logout);
   router.put('/details/', users.updateOwnDetails);
   router.get("/details", users.getOwnDetails);
-  router.get("/", users.exists)
+  router.post("/exists", users.exists)
   
   app.use("/users", router)
 }

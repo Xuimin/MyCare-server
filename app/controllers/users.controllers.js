@@ -168,7 +168,7 @@ exports.getOwnDetails = async(req, res) => {
 }
 
 exports.exists = (req, res) => {
-  User.findOne({ phone: req.body.phone})
+  User.findOne({ phone: req.body.phone })
   .then(data => res.send(data))
   .catch(err => {
     res.status.send({
