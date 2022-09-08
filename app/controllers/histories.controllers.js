@@ -11,23 +11,10 @@ exports.checkin = async (req, res) => {
   
   const user = await Users.findOne({ isActive: true })
 
-  // set current date and time
-  let currentDateTime = new Date();
-  
-  let date = `${currentDateTime.getDate()}/${currentDateTime.getMonth() + 1}/${currentDateTime.getFullYear()}`
-
-  let hour = currentDateTime.getHours()
-  let minute = currentDateTime.getMinutes()
-  
-  if(hour < 10) { hour = "0" + currentDateTime.getHours() }
-  if(minute < 10) { minute = "0" + currentDateTime.getMinutes() }
-
-  let time =  hour + ":" + minute
-
   const histories = new Histories({
     location: req.body.location,
-    date: date,
-    time: time,
+    date: req.body.date,
+    time: req.body.time,
     userId: user.id
   })
 
