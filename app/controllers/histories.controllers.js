@@ -12,7 +12,7 @@ exports.checkin = async (req, res) => {
   const user = await Users.findOne({ isActive: true })
 
   // set current date and time
-  let currentDateTime = new Date().getTimezoneOffset();
+  let currentDateTime = new Date();
   
   let date = `${currentDateTime.getDate()}/${currentDateTime.getMonth() + 1}/${currentDateTime.getFullYear()}`
 
