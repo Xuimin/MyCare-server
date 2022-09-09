@@ -71,8 +71,10 @@ exports.login = async (req, res) => {
   const activeUser = await User.findOne({ isActive: true })
 
   if(activeUser) {
-    activeUser.isActive = false
-    activeUser.save()
+    if(activeUser.id !== user.id) {
+      activeUser.isActive = false
+      activeUser.save()
+    }
   }
 
   if(!user) {
@@ -109,52 +111,53 @@ exports.logout = async (req, res) => {
 
 // UPDATE USER DETAILS
 exports.updateOwnDetails = async (req, res) => {
-  const { fullname, phone, password, confirmPassword, location } = req.body
+  const { fullname, ic, password, confirmPassword, location } = req.body
   const user = await User.findOne({ isActive: true })
-  const phoneNum = await User.findOne({ phone })
+
+  if(!user) {
+    return res.send({
+     message: "You are not login!"
+   })
+ }
 
   // checking all inputs
   let checkPw = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()-+]).{8,}$/
-  let checkPhone = /^[0-9]{9,10}$/gm
+  let checkIc = /^[0-9]{12}$/gm
 
-  if(phone.match(checkPhone) == null) {
+  if(ic.match(checkIc) == null) {
     return res.status(400).send({
-      message: "Phone should be at least 9-10 digit long and start with 1"
+      message: "IC should be at 12 digit long."
     })
   }
 
-  if(phoneNum) {
+  if(password.match(checkPw) == null && password != "") {
     return res.status(400).send({
-      message: "Phone number already exists"
+      message: "Password should have at least 8 characters and contain alphabet, number and special symbols."
     })
   }
 
-  if(password.match(checkPw) == null) {
+  if(password !== confirmPassword && password != "") {
     return res.status(400).send({
-      message: "Password should have at least 8 characters and contain alphabet, number and special symbols "
+      message: "Confirm password and password are not the same."
     })
   }
-
-  if(password !== confirmPassword) {
-    return res.status(400).send({
-      message: "Confirm password and password are not the same"
-    })
-  }
-
-  user.password = ( password == "" ) ? user.password : password
   
-  let salt = bcrypt.genSaltSync(10)
-  let hash = bcrypt.hashSync(password, salt)
+  let hash = ""
+
+  if(password !== "") {
+    let salt = bcrypt.genSaltSync(10)
+    hash = bcrypt.hashSync(password, salt)
+  }
 
   user.fullname = fullname
-  user.phone = phone
-  user.password = hash
+  user.ic = ic
+  user.password = password == "" ? user.password : hash
   user.location = location
 
   await user.save()
 
   return res.send({
-    message: "User Details Successfully Updated",
+    message: "User Details Successfully Updated!",
     user
   })
 }
@@ -163,7 +166,7 @@ exports.getOwnDetails = async(req, res) => {
   User.findOne({ isActive: true })
   .then(data => { res.send(data) })
   .catch(err => {
-    res.status(500).send({ message: err.message || `Failed to get details of user ${req.body.userId}` })
+    res.status(500).send({ message: err.message || `Failed to get details of user ${req.body.userId}.` })
   })
 }
 
@@ -172,7 +175,7 @@ exports.exists = (req, res) => {
   .then(data => res.send(data))
   .catch(err => {
     res.status.send({
-      message: err.message || `User not found with ${req.body.phone}`
+      message: err.message || `User not found with ${req.body.phone}.`
     })
   })
 }
