@@ -152,7 +152,7 @@ exports.updateOwnDetails = async (req, res) => {
   user.fullname = fullname
   user.ic = ic
   user.password = password == "" ? user.password : hash
-  user.location = location
+  user.location = location == "" ? user.location : location
 
   await user.save()
 
@@ -162,6 +162,7 @@ exports.updateOwnDetails = async (req, res) => {
   })
 }
 
+// GET OWN DETAILS
 exports.getOwnDetails = async(req, res) => {
   User.findOne({ isActive: true })
   .then(data => { res.send(data) })
@@ -170,6 +171,7 @@ exports.getOwnDetails = async(req, res) => {
   })
 }
 
+// CHECK EXISTS
 exports.exists = (req, res) => {
   User.findOne({ phone: req.body.phone })
   .then(data => res.send(data))
